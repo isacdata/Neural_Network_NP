@@ -1,0 +1,6 @@
+.env
+*.csv
+generate_data.py
+# metrics.py
+test.py
+__pycache__/
