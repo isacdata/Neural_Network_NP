@@ -1,4 +1,5 @@
 import numpy as np
+from utils.metrics import mean_squared_error
 
 def activation_function(s):
     # Para tarefas de classificação, será utilizado a função sigmoide
@@ -12,6 +13,8 @@ def treinar( X_treino: np.array , y_treino: np.array , learning_rate: float, epo
     pesos = rng.random( ( num_neuronios_saida, num_entradas ) )
     pesos_t = np.transpose( pesos )
     y_predicao = np.zeros( (X_treino.shape[0], num_neuronios_saida ) )
+
+    erros_historico = []
     
     # Treinar em todas as épocas
     for epoca in range( epocas ):
@@ -22,17 +25,23 @@ def treinar( X_treino: np.array , y_treino: np.array , learning_rate: float, epo
                 y_predicao[line, neuronio] = activation_function(s)
                 
                 # Erro de predição
-                erro_quadratico = (y_treino[line, neuronio] - y_predicao[line, neuronio]) ** 2
-                erro = np.sqrt( erro_quadratico )
+                erro = y_treino[line, neuronio] - y_predicao[line, neuronio]
+                output= y_predicao[line, neuronio]
+
+                derivada_s = output * (1 - output)
                 
-                # Backpropagation
-                derivada_s = activation_function(s) * (1- activation_function(s))
-                delta_w =- (-2) * (learning_rate) * erro * derivada_s * X_treino[ line ]
+                # 4. Cálculo do Delta Weight
+                # Delta = taxa_aprendizado * erro * derivada * entrada
+                delta_w = learning_rate * erro * derivada_s * X_treino[line]
                 
                 # Gradient Descent
                 pesos_t[:, neuronio] = pesos_t[:, neuronio] + delta_w
-                
-    return pesos_t 
+
+        # Cálculo do erro médio quadrático da época
+        mse_epoca = mean_squared_error(y_treino, y_predicao)
+        erros_historico.append(mse_epoca)
+
+    return pesos_t, erros_historico
 
 def predicao( X_teste : np.array , pesos_t : np.array ) -> np.array:
     mult = np.matmul( X_teste, pesos_t )
