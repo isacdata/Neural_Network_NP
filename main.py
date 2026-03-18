@@ -27,7 +27,7 @@ X_treino_normalizado = min_max_scaler( X_treino )
 # Grid Search
 
 # Valores de teste
-taxas_aprendizado = [0.01, 0.05, 0.1]
+taxas_aprendizado = [0.01, 0.05, 0.1, 0.5]
 lista_epocas = [50, 100, 200]
 
 # Opções de métricas {'accuracy', 'precision', 'recall', 'f1_score', 'mse'}
